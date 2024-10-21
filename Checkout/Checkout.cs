@@ -10,10 +10,8 @@
 
         Dictionary<string, int> cartItems = new Dictionary<string, int>();
 
-        public int ScanInNoSpecials(IEnumerable<string> shoppingCart)
+        private void Scan(IEnumerable<string> shoppingCart)
         {
-            int subTotal = 0;
-
             foreach (string cartItem in shoppingCart)
             {
                 if (!cartItems.ContainsKey(cartItem))
@@ -22,6 +20,12 @@
                 }
                 cartItems[cartItem]++;
             }
+        }
+        public int ScanInNoSpecials(IEnumerable<string> shoppingCart)
+        {
+            int subTotal = 0;
+
+            Scan(shoppingCart);
 
             foreach (var cartItem in cartItems)
             {
@@ -33,5 +37,33 @@
 
             return subTotal;
         }
+
+        public int ScanInWithSpecials(IEnumerable<string> shoppingCart)
+        {
+            int subTotal = 0;
+
+            Scan(shoppingCart);
+
+            foreach (var cartItem in cartItems)
+            {
+                var units = cartItem.Value;
+                StoreItem storeItem = storeItems.Where(i => i.SKU == cartItem.Key.ToString()).First();
+
+                if (storeItem.SpecialPrice?.Qty > 0)
+                {
+                    var atThisPrice = units / storeItem.SpecialPrice.Qty;
+                    subTotal += atThisPrice * storeItem.SpecialPrice.Price;
+
+                    atThisPrice = units % storeItem.SpecialPrice.Qty;
+                    subTotal += atThisPrice * storeItem.UnitPrice;
+                }
+                else
+                {
+                    subTotal += (units * storeItem.UnitPrice);
+                }
+            }
+            return subTotal;
+        }
+
     }
 }
