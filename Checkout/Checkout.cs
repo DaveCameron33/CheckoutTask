@@ -1,8 +1,9 @@
 ﻿namespace Checkout
 {
-    public class Checkout
+    public class Checkout:ICheckout
     {
         List<StoreItem> storeItems;
+
         public Checkout(StoreItems _storeItems)
         {
             storeItems = _storeItems.StockItems;
